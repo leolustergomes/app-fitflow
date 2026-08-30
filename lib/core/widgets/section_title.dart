@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 
 import '../../app/theme.dart';
 
+/// Rótulo de seção em caixa alta, com ação opcional à direita.
+///
+/// Centraliza o estilo dos cabeçalhos de bloco usados nas telas para manter a
+/// consistência tipográfica da marca.
 class SectionTitle extends StatelessWidget {
   final String title;
   final String? actionLabel;
@@ -19,14 +23,7 @@ class SectionTitle extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          title,
-          style: const TextStyle(
-            color: FitFlowColors.text,
-            fontSize: 20,
-            fontWeight: FontWeight.w800,
-          ),
-        ),
+        Text(title.toUpperCase(), style: FitFlowTextStyles.sectionLabel),
 
         if (actionLabel != null)
           TextButton(

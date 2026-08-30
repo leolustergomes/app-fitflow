@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../app/theme.dart';
+import '../../core/widgets/section_title.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -37,15 +38,7 @@ class HomeScreen extends StatelessWidget {
           const SizedBox(height: 30),
 
           // TREINO DE HOJE
-          Text(
-            'SEU TREINO DE HOJE',
-            style: TextStyle(
-              color: FitFlowColors.secondaryText,
-              fontSize: 13,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 1,
-            ),
-          ),
+          const SectionTitle(title: 'SEU TREINO DE HOJE'),
 
           const SizedBox(height: 12),
 
@@ -122,15 +115,7 @@ class HomeScreen extends StatelessWidget {
           const SizedBox(height: 30),
 
           // RESUMO
-          Text(
-            'RESUMO',
-            style: TextStyle(
-              color: FitFlowColors.secondaryText,
-              fontSize: 13,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 1,
-            ),
-          ),
+          const SectionTitle(title: 'RESUMO'),
 
           const SizedBox(height: 12),
 
@@ -159,15 +144,7 @@ class HomeScreen extends StatelessWidget {
           const SizedBox(height: 30),
 
           // ÚLTIMO TREINO
-          Text(
-            'ÚLTIMO TREINO',
-            style: TextStyle(
-              color: FitFlowColors.secondaryText,
-              fontSize: 13,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 1,
-            ),
-          ),
+          const SectionTitle(title: 'ÚLTIMO TREINO'),
 
           const SizedBox(height: 12),
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../app/theme.dart';
+import '../../core/widgets/section_title.dart';
 
 class WorkoutsScreen extends StatelessWidget {
   const WorkoutsScreen({super.key});
@@ -58,14 +59,7 @@ class WorkoutsScreen extends StatelessWidget {
 
           const SizedBox(height: 25),
 
-          const Text(
-            'TREINOS PRONTOS',
-            style: TextStyle(
-              color: FitFlowColors.secondaryText,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 1,
-            ),
-          ),
+          const SectionTitle(title: 'TREINOS PRONTOS'),
 
           const SizedBox(height: 12),
 
