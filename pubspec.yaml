@@ -45,6 +45,18 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.4
+
+# Gera os icones de launcher a partir do logo da marca.
+# Regerar com: dart run flutter_launcher_icons
+flutter_launcher_icons:
+  image_path: "assets/brand/fitflow-logo.png"
+  android: true
+  ios: true
+  web:
+    generate: true
+  adaptive_icon_background: "#121212"
+  adaptive_icon_foreground: "assets/brand/fitflow-logo.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -56,6 +68,9 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+
+  assets:
+    - assets/brand/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

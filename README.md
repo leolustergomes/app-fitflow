@@ -1,5 +1,9 @@
 # 🏋️ FitFlow
 
+<p align="center">
+  <img src="assets/brand/fitflow-logo.png" alt="FitFlow" width="180">
+</p>
+
 > Aplicativo de gerenciamento, acompanhamento e evolução de treinos desenvolvido em Flutter.
 
 ---
@@ -32,6 +36,15 @@ O app resolve isso oferecendo um fluxo rápido de **"Iniciar/Terminar Treino"**,
 ---
 
 ## 🎨 Desenvolvimento de Marca & Identidade Visual
+
+### Logo
+<img src="assets/brand/fitflow-logo.png" alt="Logo FitFlow" width="140">
+
+Monograma formado por duas letras **F**, a segunda rotacionada em 180°, encaixadas em um bloco contínuo. A inclinação para a frente comunica movimento e progressão; a leitura funciona tanto como "FF" quanto como forma única, o que mantém o ícone estável em tamanhos pequenos.
+
+* **Aplicação:** laranja `#FF6600` sobre preto grafite `#121212`, sem degradê e sem sombra.
+* **Arquivo:** `assets/brand/fitflow-logo.png` (1024×1024)
+* **Uso:** ícone do aplicativo em Android, iOS e web.
 
 ### Nome e Naming Rationale
 **FitFlow**
