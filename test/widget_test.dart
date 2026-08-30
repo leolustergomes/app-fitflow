@@ -1,30 +1,45 @@
-// This is a basic Flutter widget test.
+// Testes de widget do FitFlow.
 //
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
+// Cobrem a inicialização do app e a navegação principal entre as abas.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:fitflow/main.dart';
+import 'package:fitflow/app/app.dart';
+
+/// Localiza um texto dentro da barra de navegação inferior.
+///
+/// O [IndexedStack] mantém as quatro telas na árvore de widgets, então buscar
+/// pelo texto solto encontraria também os títulos das telas em segundo plano.
+Finder navLabel(String label) =>
+    find.descendant(of: find.byType(NavigationBar), matching: find.text(label));
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  testWidgets('abre na Home com a navegação principal', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const FitFlowApp());
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    // Marca e chamada da tela inicial.
+    expect(find.text('FITFLOW'), findsOneWidget);
+    expect(find.text('Bora treinar?'), findsOneWidget);
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    // As quatro abas do app.
+    expect(find.byType(NavigationBar), findsOneWidget);
+    expect(navLabel('Início'), findsOneWidget);
+    expect(navLabel('Treinos'), findsOneWidget);
+    expect(navLabel('Evolução'), findsOneWidget);
+    expect(navLabel('Perfil'), findsOneWidget);
+  });
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+  testWidgets('navega da Home para a aba Treinos', (WidgetTester tester) async {
+    await tester.pumpWidget(const FitFlowApp());
+
+    // Ícone da aba Treinos no estado não selecionado.
+    await tester.tap(find.byIcon(Icons.fitness_center_outlined));
+    await tester.pumpAndSettle();
+
+    expect(find.text('CRIAR MEU TREINO'), findsOneWidget);
+    expect(find.text('TREINOS PRONTOS'), findsOneWidget);
   });
 }
