@@ -80,7 +80,15 @@ A identidade visual foi construída priorizando o conforto visual em ambientes i
 * **Branco / Gelo (Textos e Títulos):** `#F8F9FA` — Máxima legibilidade para números de carga e cronômetros.
 * **Cinza Claro (Textos Secundários):** `#8C8D94` — Legendas, rótulos de seção e informações de apoio.
 
-> As cinco cores estão implementadas em `lib/app/theme.dart`, na classe `FitFlowColors`.
+> As cinco cores estão implementadas em `lib/app/theme.dart`, na classe `FitFlowColors` (constantes `darkPrimary`, `darkBackground`, `darkSurface`, `darkText` e `darkTertiary`). O modo escuro é o **padrão** do app.
+
+#### Modo claro (adicionado no CP5)
+Opcional, ativado em **Perfil → Configurações**. Mantém a mesma estrutura de telas e troca apenas a paleta:
+* **Roxo Principal:** `#6D28D9` · **Roxo Secundário:** `#8B5CF6`
+* **Fundo:** `#FFFFFF` · **Cards:** `#F6F3FB`
+* **Texto:** `#18181B` · **Cinza-azulado (secundário):** `#64748B`
+
+> As telas leem a paleta ativa com `FitFlowColors.of(context)`, então nenhuma cor fica fixa no código das telas.
 
 ### Tipografia
 * **Fonte Primária:** **Roboto** — sans-serif de alta legibilidade em telas pequenas, especialmente para números de carga e cronômetro. É a fonte nativa do Material Design e já acompanha o Flutter, então não depende de pacote externo nem de download em tempo de execução.
@@ -92,7 +100,7 @@ A identidade visual foi construída priorizando o conforto visual em ambientes i
 | Número de destaque (carga, tempo, %) | `headlineSmall` | 24 / w900 |
 | Nome do treino no card | `titleLarge` | 23 / bold |
 | Subtítulo | `titleMedium` | 18 / bold |
-| Rótulo de seção (caixa alta) | `FitFlowTextStyles.sectionLabel` | 13 / bold / *letter-spacing* 1 |
+| Rótulo de seção (caixa alta) | widget `SectionTitle` | 13 / bold / *letter-spacing* 1 |
 | Texto de apoio | `bodyMedium` | 14 / regular |
 
 * **Racional dos pesos altos (w900):** durante o treino a tela é lida de relance, com o celular na mão entre uma série e outra — peso alto e contraste forte reduzem o tempo de leitura.
@@ -108,18 +116,88 @@ Enquanto concorrentes focam em redes sociais fitness excessivas ou interfaces co
 
 ---
 
+## 📱 Protótipo Funcional (CP5)
+
+O protótipo implementa o fluxo principal do MVP com **dados mockados**, sem depender de backend. Todas as telas são navegáveis e as ações do usuário atualizam o app em tempo de execução.
+
+### Fluxo de telas
+
+```text
+Início ──► Treino em andamento ──► Resumo ("Treino finalizado!") ──► Início (métricas atualizadas)
+  │
+Treinos ──► Detalhe do treino ──► Treino em andamento
+  │    └──► Criar treino ──► (novo treino aparece na lista)
+  │
+Evolução (gráfico de carga + histórico de treinos concluídos)
+  │
+Perfil ──► Dados pessoais
+       ├──► Configurações (modo claro/escuro, kg/lb, notificações)
+       └──► Sobre o FitFlow
+```
+
+### Funcionalidades por tela
+
+**Início**
+* Treino recomendado do dia com botão **INICIAR TREINO**.
+* Resumo com a quantidade de treinos concluídos e o tempo acumulado — atualizados ao finalizar um treino.
+* Card de **último treino**, que abre o resumo dos exercícios.
+
+**Treinos**
+* Lista de treinos prontos (musculação e cardio) e personalizados.
+* Detalhe com exercícios, séries, repetições/minutos e carga.
+* **Criar treino:** nome, duração, exercícios com séries, repetições/minutos e carga; o treino aparece na lista ao salvar.
+
+**Treino em andamento**
+* Cronômetro em tempo real.
+* *Check-in* de cada exercício e contador de concluídos.
+* Botão **TERMINAR TREINO**, que registra data e duração e exibe o resumo.
+
+**Evolução**
+* Gráfico de evolução de carga (supino reto, mai–out).
+* Maior carga e percentual de evolução.
+* Histórico de treinos concluídos, incluindo os finalizados na sessão.
+
+**Perfil**
+* Nome, objetivo (Emagrecimento e Composição Corporal · Hipertrofia e Força · Condicionamento Físico e Saúde · Funcional e Performance) e nível (Iniciante · Intermediário · Avançado) editáveis.
+* **Configurações:** modo claro/escuro, unidade de peso (kg ou lb) e preferência de notificações.
+* **Sobre o FitFlow.**
+
+### Dados mockados
+Definidos em `lib/data/mock_data.dart` e `lib/app/app.dart`:
+* **6 treinos prontos** com cargas realistas — Peito + Tríceps, Costas + Bíceps, Pernas, Full Body (musculação) e Corrida, Spinning (cardio, medidos em minutos).
+* **3 sessões concluídas** no histórico, com data e duração.
+* **Série de 6 meses** de carga no supino reto (60 → 70 kg) para o gráfico de evolução.
+* **Perfil de exemplo** com objetivo e nível pré-definidos.
+* **Casos cobertos:** exercícios com e sem carga, treinos de força e de tempo, treinos personalizados e conversão kg ↔ lb. As telas também tratam o estado vazio ("Nenhum treino finalizado") e validam os formulários (nome obrigatório, séries/carga inválidas).
+
+---
+
+## 🧠 Decisões Técnicas (desde o CP4)
+
+1. **Flutter + Material 3:** mantém o desenvolvimento multiplataforma (Android, Web e Windows a partir do mesmo código) e a identidade visual definida no CP4.
+2. **Dados mockados em memória, sem backend:** o CP5 pede um protótipo com dados simulados, então o app não depende de banco de dados, rede nem plugins nativos, o que simplifica rodar em Android, Web ou Windows.
+3. **Estado com `setState`:** o estado global (treinos, histórico, perfil, tema e unidade) fica em `MainNavigation` e desce para as telas por parâmetros e *callbacks*. Para o tamanho atual do app, evita a complexidade de um pacote de gerenciamento de estado.
+4. **Navegação com `NavigationBar` + `IndexedStack`:** as quatro abas mantêm o estado (posição de rolagem, formulários) ao alternar. Os fluxos secundários usam `Navigator.push`, e telas de edição devolvem o resultado com `Navigator.pop`.
+5. **Modelos tipados** (`lib/models/`): `Workout`, `WorkoutExercise`, `WorkoutSession` e `UserProfile` substituem os textos fixos das telas do CP4.
+6. **Carga normalizada em kg:** as cargas são armazenadas sempre em kg e convertidas só na exibição/entrada quando o usuário escolhe libras (`lib/core/utils/weight_unit.dart`).
+7. **Tema claro/escuro:** `buildFitFlowTheme(Brightness)` gera os dois temas a partir da mesma estrutura; o escuro (identidade do CP4) continua sendo o padrão.
+
+---
+
 ## 🛠️ Tecnologias Utilizadas
-* **Framework:** Flutter (Dart)
-* **Design System:** Material 3 (`useMaterial3: true`), tema escuro nativo
-* **Gerenciamento de Estado:** [Definir, ex: Provider / Riverpod / setState]
-* **Armazenamento Local:** [Definir, ex: Hive / SQLite / shared_preferences]
+* **Framework:** Flutter 3.35+ (Dart 3.9+)
+* **Design System:** Material 3 (`useMaterial3: true`), tema escuro padrão + tema claro opcional
+* **Gerenciamento de Estado:** `setState` (estado elevado em `MainNavigation`)
+* **Dados:** mockados em memória (`lib/data/mock_data.dart`)
+* **Ícones do app:** `flutter_launcher_icons`
+* **Testes:** `flutter_test` (testes de widget)
 
 ---
 
 ## ▶️ Como Rodar o Projeto
 
 ### Pré-requisitos
-* **Flutter SDK** com **Dart 3.11.5 ou superior** (ver `environment.sdk` no `pubspec.yaml`)
+* **Flutter SDK 3.35 ou superior** (Dart 3.9+, ver `environment.sdk` no `pubspec.yaml`)
 * Android Studio ou VS Code com a extensão Flutter
 * Para rodar em Android: um emulador configurado ou dispositivo físico com depuração USB ativada
 
@@ -130,11 +208,7 @@ flutter --version
 flutter doctor
 ```
 
-Se a versão do Dart for anterior à 3.11.5, atualize antes de continuar:
-
-```bash
-flutter upgrade
-```
+> ⚠️ **No Windows, clone o projeto em uma pasta sem acentos** (ex.: `C:\dev\app-fitflow`). Em caminhos como `Área de Trabalho`, o compilador de *shaders* do Flutter falha com *"Could not write file ... ink_sparkle.frag"*.
 
 ### Instalação e execução
 
@@ -156,9 +230,16 @@ flutter run
 Para rodar em uma plataforma específica:
 
 ```bash
-flutter run -d chrome     # navegador
-flutter run -d windows    # desktop Windows
+flutter run -d chrome          # navegador
+flutter run -d windows         # desktop Windows
 flutter run -d emulator-5554   # emulador Android
+```
+
+### Regenerar os ícones do app
+Após trocar a logo em `assets/brand/fitflow-logo.png`:
+
+```bash
+dart run flutter_launcher_icons
 ```
 
 ### Qualidade
@@ -174,16 +255,24 @@ flutter test      # testes de widget
 lib/
 ├── main.dart                    # ponto de entrada
 ├── app/
-│   ├── app.dart                 # MaterialApp e navegação principal
-│   └── theme.dart               # cores, tipografia e tema Material 3
+│   ├── app.dart                 # MaterialApp, navegação principal e estado do app
+│   └── theme.dart               # cores, tipografia e temas claro/escuro
 ├── core/
-│   └── widgets/                 # componentes reutilizáveis
-│       └── section_title.dart
+│   ├── utils/
+│   │   └── weight_unit.dart     # conversão kg/lb e formatação de tempo
+│   └── widgets/
+│       └── section_title.dart   # rótulo de seção reutilizável
+├── data/
+│   └── mock_data.dart           # treinos e evolução simulados
+├── models/                      # Workout, WorkoutSession, UserProfile
 └── screens/
     ├── home/                    # tela inicial
-    ├── workouts/                # treinos prontos e personalizados
+    ├── workouts/                # lista de treinos
+    ├── workout_detail/          # detalhe do treino
+    ├── active_workout/          # treino em andamento (cronômetro + check-in)
+    ├── create_workout/          # criador de treino personalizado
     ├── progress/                # evolução e histórico
-    └── profile/                 # perfil do usuário
+    └── profile/                 # perfil, dados pessoais, configurações e sobre
 ```
 
 ---
