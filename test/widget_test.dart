@@ -40,6 +40,6 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('CRIAR MEU TREINO'), findsOneWidget);
-    expect(find.text('TREINOS PRONTOS'), findsOneWidget);
+    expect(find.text('TREINOS DISPONÍVEIS'), findsOneWidget);
   });
 }
