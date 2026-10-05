@@ -1,28 +1,47 @@
 import 'package:flutter/material.dart';
 
 import '../../app/theme.dart';
+import '../../core/utils/weight_unit.dart';
+import '../../models/user_profile.dart';
+import 'about_screen.dart';
+import 'personal_data_screen.dart';
+import 'settings_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
+  final UserProfile profile;
+  final WeightUnit weightUnit;
+  final bool notificationsEnabled;
+  final bool isLightMode;
+  final ValueChanged<UserProfile> onProfileChanged;
+  final ValueChanged<WeightUnit> onWeightUnitChanged;
+  final ValueChanged<bool> onNotificationsChanged;
+  final ValueChanged<bool> onLightModeChanged;
+
+  const ProfileScreen({
+    super.key,
+    required this.profile,
+    required this.weightUnit,
+    required this.notificationsEnabled,
+    required this.isLightMode,
+    required this.onProfileChanged,
+    required this.onWeightUnitChanged,
+    required this.onNotificationsChanged,
+    required this.onLightModeChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final colors = FitFlowColors.of(context);
+    final initials = profile.name.trim().isEmpty
+        ? 'FF'
+        : profile.name.trim().substring(0, 1).toUpperCase();
+
     return SafeArea(
       child: ListView(
         padding: const EdgeInsets.all(20),
         children: [
-          const Text(
-            'Perfil',
-            style: TextStyle(
-              fontSize: 30,
-              fontWeight: FontWeight.w900,
-              color: FitFlowColors.text,
-            ),
-          ),
-
+          Text('Perfil', style: Theme.of(context).textTheme.displaySmall),
           const SizedBox(height: 25),
-
-          // PERFIL DO USUÁRIO
           Card(
             child: Padding(
               padding: const EdgeInsets.all(20),
@@ -30,70 +49,81 @@ class ProfileScreen extends StatelessWidget {
                 children: [
                   CircleAvatar(
                     radius: 32,
-                    backgroundColor: FitFlowColors.primary,
-                    child: const Text(
-                      'FF',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w900,
-                        fontSize: 18,
-                      ),
+                    backgroundColor: colors.primary,
+                    child: Text(
+                      initials,
+                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 18),
                     ),
                   ),
-
                   const SizedBox(width: 16),
-
-                  const Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Usuário FitFlow',
-                        style: TextStyle(
-                          color: FitFlowColors.text,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(profile.name, style: Theme.of(context).textTheme.titleMedium),
+                        const SizedBox(height: 5),
+                        Text(
+                          '${profile.goal.label} • ${profile.level.label}',
+                          style: TextStyle(color: colors.tertiary),
                         ),
-                      ),
-
-                      SizedBox(height: 5),
-
-                      Text(
-                        'Seu perfil de treino',
-                        style: TextStyle(color: FitFlowColors.secondaryText),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ],
               ),
             ),
           ),
-
           const SizedBox(height: 15),
-
-          // OPÇÕES
           Card(
             child: Column(
               children: [
                 ListTile(
-                  leading: const Icon(
-                    Icons.person_outline,
-                    color: FitFlowColors.primary,
-                  ),
+                  leading: Icon(Icons.person_outline, color: colors.primary),
                   title: const Text('Dados pessoais'),
+                  subtitle: Text('${profile.name} • ${profile.level.label}'),
                   trailing: const Icon(Icons.chevron_right),
-                  onTap: () {},
+                  onTap: () async {
+                    final updated = await Navigator.push<UserProfile>(
+                      context,
+                      MaterialPageRoute(builder: (_) => PersonalDataScreen(profile: profile)),
+                    );
+                    if (updated != null) onProfileChanged(updated);
+                  },
                 ),
-
                 const Divider(height: 1),
-
                 ListTile(
-                  leading: const Icon(
-                    Icons.settings_outlined,
-                    color: FitFlowColors.primary,
-                  ),
+                  leading: Icon(Icons.settings_outlined, color: colors.primary),
                   title: const Text('Configurações'),
+                  subtitle: Text('${isLightMode ? 'Modo claro' : 'Modo escuro'} • ${weightUnit.symbol}'),
                   trailing: const Icon(Icons.chevron_right),
-                  onTap: () {},
+                  onTap: () async {
+                    final settings = await Navigator.push<SettingsResult>(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => SettingsScreen(
+                          isLightMode: isLightMode,
+                          weightUnit: weightUnit,
+                          notificationsEnabled: notificationsEnabled,
+                        ),
+                      ),
+                    );
+                    if (settings != null) {
+                      onWeightUnitChanged(settings.weightUnit);
+                      onNotificationsChanged(settings.notificationsEnabled);
+                      onLightModeChanged(settings.isLightMode);
+                    }
+                  },
+                ),
+                const Divider(height: 1),
+                ListTile(
+                  leading: Icon(Icons.info_outline, color: colors.primary),
+                  title: const Text('Sobre o FitFlow'),
+                  subtitle: const Text('Conheça o aplicativo'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const AboutScreen()),
+                  ),
                 ),
               ],
             ),
